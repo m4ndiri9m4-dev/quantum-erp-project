@@ -28,8 +28,10 @@ app.use('/api/projects', require('./routes/projects.js'));
 app.use('/api/time-clock-logs', require('./routes/timeClockLogs.js'));
 app.use('/api/sales-reports', require('./routes/salesReports.js'));
 
-// --- CATCH-ALL ROUTE (for Monorepo) ---
-app.get('*', (req, res) => {
+// --- CATCH-ALL: serve frontend index for GET requests ---
+// Use middleware instead of an Express route pattern to avoid path-to-regexp issues
+app.use((req, res) => {
+  if (req.method !== 'GET') return res.status(404).end();
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
