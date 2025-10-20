@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path');
-const { sequelize, connectDB } = require('./config/db.js');
+const { sequelize, connectDB } = require('./db.js');
 
 // Load environment variables
 dotenv.config();
@@ -38,7 +38,7 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 5000;
 
 // Sync database and start the server
-sequelize.sync().then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log('Database tables created successfully.');
   app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 }).catch(err => {

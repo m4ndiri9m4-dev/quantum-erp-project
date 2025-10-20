@@ -2,7 +2,7 @@ const { Sequelize } = require('sequelize');
 
 let sequelize;
 
-// If MySQL env vars are present, use MySQL; otherwise use a local SQLite file for dev/test.
+// If MySQL env vars are present, use MySQL; otherwise fallback to SQLite for local dev
 if (process.env.DB_NAME && process.env.DB_USER) {
   sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -10,11 +10,11 @@ if (process.env.DB_NAME && process.env.DB_USER) {
     process.env.DB_PASSWORD,
     {
       host: process.env.DB_HOST || 'localhost',
-      dialect: 'mysql'
+      dialect: 'mysql',
+      port: process.env.DB_PORT || 3306
     }
   );
 } else {
-  // Fallback to SQLite to make local development simpler when env is not configured
   sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: process.env.SQLITE_FILE || 'database.sqlite',
