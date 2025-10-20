@@ -1,0 +1,35 @@
+const { Sequelize } = require('sequelize');
+
+let sequelize;
+
+// If MySQL env vars are present, use MySQL; otherwise use a local SQLite file for dev/test.
+if (process.env.DB_NAME && process.env.DB_USER) {
+  sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST || 'localhost',
+      dialect: 'mysql'
+    }
+  );
+} else {
+  // Fallback to SQLite to make local development simpler when env is not configured
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: process.env.SQLITE_FILE || 'database.sqlite',
+    logging: false
+  });
+}
+
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Database connected successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    process.exit(1);
+  }
+};
+
+module.exports = { sequelize, connectDB };
